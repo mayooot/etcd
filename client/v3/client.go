@@ -121,6 +121,17 @@ func WithZapLogger(lg *zap.Logger) Option {
 	}
 }
 
+// Ping sends a ping request to the etcd server and returns the result.
+func (c *Client) Ping(ctx context.Context) error {
+	if _, err := c.Put(ctx, "/ping", "pong"); err != nil {
+		return fmt.Errorf("failed to put /ping to etcd, err: %w", err)
+	}
+	if _, err := c.Delete(ctx, "/ping"); err != nil {
+		return fmt.Errorf("failed to delete /ping from etcd failed, err: %w", err)
+	}
+	return nil
+}
+
 // WithLogger overrides the logger.
 //
 // Deprecated: Please use WithZapLogger or Logger field in clientv3.Config
